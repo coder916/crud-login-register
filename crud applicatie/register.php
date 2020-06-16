@@ -15,21 +15,25 @@ if (isset ($_POST['naam']) && isset($_POST['email']) && isset($_POST['Gebruikers
 
     $passwordHash = password_hash($wachtwoord, PASSWORD_BCRYPT, array("cost" => 12));
 
-    $sql = 'INSERT INTO mensen(naam, email, Gebruikersnaam, Wachtwoord, leeftijd) VALUES(:naam, :email, :gebruikersnaam, :wachtwoord, :leeftijd)';
-    $statement = $connection->prepare($sql);
+    if(empty($name) || empty($email) || empty($gebruikersnaam) || empty($wachtwoord) || empty($leeftijd)) {
+    $message = 'All field are required';
+    } else {
+        $sql = 'INSERT INTO mensen(naam, email, Gebruikersnaam, Wachtwoord, leeftijd) VALUES(:naam, :email, :gebruikersnaam, :wachtwoord, :leeftijd)';
+        $statement = $connection->prepare($sql);
 
-    $statement->bindValue(':naam', $name);
-    $statement->bindValue(':email', $email);
-    $statement->bindValue(':gebruikersnaam', $gebruikersnaam);
-    $statement->bindValue(':wachtwoord', $passwordHash);
-    $statement->bindValue(':leeftijd', $leeftijd);
+        $statement->bindValue(':naam', $name);
+        $statement->bindValue(':email', $email);
+        $statement->bindValue(':gebruikersnaam', $gebruikersnaam);
+        $statement->bindValue(':wachtwoord', $passwordHash);
+        $statement->bindValue(':leeftijd', $leeftijd);
 
-    $result = $statement->execute();
+        $result = $statement->execute();
 
-    if($result){
-        //What you do here is up to you!
-        $message = 'Thank you for registering with our website.';
-        header('location:login.php');
+        if ($result) {
+            //What you do here is up to you!
+            $message = 'Thank you for registering with our website.';
+            header('location:login.php');
+        }
     }
 
     /*if ($statement->execute([':naam' => $name, ':email' => $email, ':gebruikersnaam' => $gebruikersnaam, ':wachtwoord' => $wachtwoord, ':leeftijd' => $leeftijd])) {
